@@ -1,41 +1,61 @@
-import React from 'react';
+// import "./App.css";
+import React, { Suspense } from "react";
+import { lazy } from "@loadable/component";
+
 import {
-  ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+  Center,
+  Spinner,
+  ChakraProvider,
+  extendTheme,
+} from "@chakra-ui/react";
+
+// custom fonts
+import CustomFonts from "../src/Assets/Theme/custom-fonts";
+
+// importing context
+// import { ThemeContext } from "../src/context/ThemeContext";
 
 function App() {
-  return (
-    <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
+  const Home = lazy(() => import("./Pages/HomePage"));
+
+  // custom theme and font
+  const theme = extendTheme({
+    fonts: {
+      heading: `'Gentona', sans-serif`,
+      body: `'Gentona Medium', sans-serif`,
+    },
+    // colors: {
+    //   bodyBackground: "#E2E2E2",
+    //   fontNormalText: "#323232",
+    //   fontContrastColor: "#7a7b7a",
+    //   specialText: "#47B053",
+    // },
+  });
+
+  // preloader
+  const renderLoader = () => (
+    <>
+      <Box>
+        <Center w="100%" minH="100vh">
+          <Spinner size="xl" mt="12" />
+        </Center>
       </Box>
-    </ChakraProvider>
+    </>
+  );
+  return (
+    <>
+      <ChakraProvider theme={theme}>
+        <CustomFonts />
+        {/* <ThemeContext.Provider value={theme}> */}
+        <Suspense fallback={renderLoader()}>
+          <>
+            <Home />
+          </>
+        </Suspense>
+        {/* </ThemeContext.Provider> */}
+      </ChakraProvider>
+    </>
   );
 }
 
